@@ -17,7 +17,7 @@ class Disney_Movies_Gross:
     def __init__(self):
         self.path = os.path.dirname(__file__)
         self.plot_loc = 'disney_movies_gross_plots'
-        self.df = pd.read_csv(f'{self.path}/disney_movies_total_gross.csv')
+        self.df = pd.read_csv(f'{self.path}/data/disney_movies_total_gross.csv')
 
     def gross_to_int(self):
         """Change datatype of gross values from string to integer for sorting"""
@@ -118,8 +118,8 @@ class Disney_Movies_Gross:
 if __name__ == '__main__':
     disney = Disney_Movies_Gross()
     disney.gross_to_int()
-    # disney.plot_top5()
-
+    disney.plot_top5()
+    plt.clf() # clear top5 plot for best_genre plot
     disney.best_genre()
 
     # print(disney.df['genre'].unique())
