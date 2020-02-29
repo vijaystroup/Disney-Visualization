@@ -3,6 +3,7 @@ labels: 'movie_title', 'release_date', 'genre', 'MPAA_rating', 'total_gross',
         'inflation_adjusted_gross'
 """
 
+from collections import OrderedDict
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -77,36 +78,41 @@ class Disney_Movies_Gross:
                 max_value = value
 
         # plotting data
-        labels = [key for key in genres]
+        labels = [f'{key} - {round(genres[key][1] / total * 100, 1)}%' for key in genres]
         values = [genres[key][1] for key in genres]
-        wedges, texts = plt.pie(values)
+            
+        colors = ['yellowgreen','red','gold','lightskyblue','black','lightcoral',
+                  'blue','pink', 'darkgreen','yellow','grey','violet','magenta',
+                  'cyan','grey']
+        circle = plt.Circle((0, 0), 0.7, color='white')
+        wedges, texts = plt.pie(values, colors=colors)
+        p = plt.gcf()
+        p.gca().add_artist(circle)
 
-        # drawing lines to wedges to make data easier to read
-        kw = dict(arrowprops=dict(arrowstyle="-"), zorder=0, va="center")
-        for i, p in enumerate(wedges):
-            angle = (p.theta2 - p.theta1) / 2 + p.theta1
-            x = np.cos(np.deg2rad(angle))
-            y = np.sin(np.deg2rad(angle))
-            horizontalalignment = {-1: 'right', 1: 'left'}[int(np.sign(x))]
-            connectionstyle = f'angle,angleA=0,angleB={angle}'
-            kw["arrowprops"].update({"connectionstyle": connectionstyle})
-            plt.annotate(
-                f'{labels[i]} - {round(values[i]/total*100, 1)}%', 
-                (x,y),
-                xytext=(1.35*np.sign(x), 1.4*y),
-                horizontalalignment=horizontalalignment,
-                **kw
-            )
-        
-        plt.title('Disney\'s Genre Values')
+        wedges, labels = self.sort_labels(wedges, labels, values)
+        plt.legend(wedges, labels, loc='center', fontsize=8)
+
+        plt.title('Disney\'s Genre Percent Value')
         plt.axis('equal')
         plt.tight_layout()
-            
-        plt.show()
+
+        plt.savefig(f'{self.path}/{self.plot_loc}/genre_percent_value.png')
 
 
     def best_MPAA_rating(self):
         pass
+
+    @staticmethod
+    def sort_labels(classes, labels, y):
+        """Method of sorting lables for legend. Algorithm from Saullo G. P. Castro
+        on StackOverflow."""
+        classes, labels, _ = zip(*sorted(
+            zip(classes, labels, y),
+            key = lambda x: x[2],
+            reverse=True
+        ))
+
+        return (classes, labels)
 
 
 if __name__ == '__main__':
