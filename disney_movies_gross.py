@@ -107,7 +107,7 @@ class Disney_Movies_Gross:
         wedges, labels = self.sort_labels(wedges, labels, values)
         plt.legend(wedges, labels, loc='center', frameon=False, fontsize=7)
 
-        plt.title('Disney\'s Genre Percent Value of Gross Income')
+        plt.title(title)
         plt.axis('equal')
         plt.tight_layout()
 
