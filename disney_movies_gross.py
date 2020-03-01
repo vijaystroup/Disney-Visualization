@@ -17,7 +17,7 @@ class Disney_Movies_Gross:
     to sell the most movies"""
     def __init__(self):
         self.path = os.path.dirname(__file__)
-        self.plot_loc = 'disney_movies_gross_plots'
+        self.plot_loc = 'disney_movies_gross_reports'
         self.df = pd.read_csv(f'{self.path}/data/disney_movies_total_gross.csv')
 
     def gross_to_int(self):
