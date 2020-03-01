@@ -150,19 +150,19 @@ class Disney_Movies_Gross:
         total = sum(values)
         text = (
             f'Total: ${total}\n'
-            f'Mean: ${total / len(values)}\n'
+            f'Mean: ${round(total / len(values), 1)}\n'
             f'Median: ${median(values)}\n'
-            f'Std. Dev.: ${round(pstdev(values), 2)}\n'
+            f'Std. Dev.: ${round(pstdev(values), 1)}\n'
             f'Minumum: ${min(values)}   '
-            f'\n    z: {round((min(values)-total / len(values)) / pstdev(values), 2)}\n'
+            f'\n    z: {round((min(values)-total / len(values)) / pstdev(values), 1)}\n'
             f'Maximum: ${max(values)}   '
-            f'\n    z: {round((max(values)-total / len(values)) / pstdev(values), 2)}'
+            f'\n    z: {round((max(values)-total / len(values)) / pstdev(values), 1)}'
         )
 
         if plt_type is 'pie':
             plt.text(0.8, 0.6, text, fontsize=fontsize)
         elif plt_type is 'bar':
-            plt.text(-3.0, -0.5, text, fontsize=fontsize)
+            plt.text(-3.0, 0, text, fontsize=fontsize)
 
 
 if __name__ == '__main__':
