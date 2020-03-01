@@ -1,6 +1,7 @@
 """
-labels: 'movie_title', 'release_date', 'genre', 'MPAA_rating', 'total_gross',
-        'inflation_adjusted_gross'
+This module looks at The Walt Disney Company's movie data that will utilize
+the movie titles, genre, rating, and inflated adjusted gross. Then we can see
+the value of each genre and rating.
 """
 
 import os
@@ -12,6 +13,8 @@ plt.style.use('ggplot')
 
 
 class Disney_Movies_Gross:
+    """This class has functions to find the best genre and rating for Disney
+    to sell the most movies"""
     def __init__(self):
         self.path = os.path.dirname(__file__)
         self.plot_loc = 'disney_movies_gross_plots'
@@ -82,6 +85,8 @@ class Disney_Movies_Gross:
         self.pie_plot(values, labels, colors, title, saveas)
 
     def iter_data(self, key, value):
+        """Method for getting appropriate data from data file"""
+
         total = 0
         data = {}
         for row in self.df.iterrows():
@@ -103,6 +108,8 @@ class Disney_Movies_Gross:
         return (data, total, labels, values)
 
     def pie_plot(self, values, labels, colors, title, saveas):
+        """Method for plotting pie charts"""
+
         circle = plt.Circle((0, 0), 0.7, color='white')
         wedges, texts = plt.pie(values, colors=colors)
         p = plt.gcf()
