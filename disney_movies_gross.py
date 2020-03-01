@@ -4,6 +4,7 @@ labels: 'movie_title', 'release_date', 'genre', 'MPAA_rating', 'total_gross',
 """
 
 import os
+from statistics import median, pstdev
 import matplotlib.pyplot as plt
 import pandas as pd
 
@@ -36,8 +37,11 @@ class Disney_Movies_Gross:
     def plot_top5(self):
         """Save a plot of the top 5 total grossed titles"""
 
-        df = self.df.sort_values('total_gross', ascending=False)
-        plt.bar(df[:5]['movie_title'], df[:5]['total_gross'])
+        df = self.df.sort_values('inflation_adjusted_gross', ascending=False)
+        plt.bar(df[:5]['movie_title'], df[:5]['inflation_adjusted_gross'])
+
+        # stats
+        self.stats('bar', list(df[:5]['inflation_adjusted_gross']))
 
         plt.xticks(rotation=30, ha='right')
         plt.title('Top 5 Total Grossing Disney Movies')
@@ -105,6 +109,10 @@ class Disney_Movies_Gross:
         p.gca().add_artist(circle)
 
         wedges, labels = self.sort_labels(wedges, labels, values)
+        
+        # statistic information
+        self.stats('pie', values)
+
         plt.legend(wedges, labels, loc='center', frameon=False, fontsize=7)
 
         plt.title(title)
@@ -127,16 +135,35 @@ class Disney_Movies_Gross:
         return (classes, labels)
     
     @staticmethod
-    def stats():
-        pass
+    def stats(plt_type, values):
+        """Plotting statistical information on plots: mean, median, std. dev.,
+        min, max, total"""
+
+        fontsize = 7
+        total = sum(values)
+        text = (
+            f'Total: ${total}\n'
+            f'Mean: ${total / len(values)}\n'
+            f'Median: ${median(values)}\n'
+            f'Std. Dev.: ${round(pstdev(values), 2)}\n'
+            f'Minumum: ${min(values)}   '
+            f'\n    z: {round((min(values)-total / len(values)) / pstdev(values), 2)}\n'
+            f'Maximum: ${max(values)}   '
+            f'\n    z: {round((max(values)-total / len(values)) / pstdev(values), 2)}'
+        )
+
+        if plt_type is 'pie':
+            plt.text(0.8, 0.6, text, fontsize=fontsize)
+        elif plt_type is 'bar':
+            plt.text(-3.0, -0.5, text, fontsize=fontsize)
 
 
 if __name__ == '__main__':
     disney = Disney_Movies_Gross()
     disney.gross_to_int()
+
     disney.plot_top5()
     plt.clf() # clear top5 plot for best_genre plot
     disney.best_genre()
+    plt.clf()
     disney.best_MPAA_rating()
-
-    # print(disney.df['MPAA_rating'].unique())
