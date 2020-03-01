@@ -47,7 +47,7 @@ class Disney_Movies_Gross:
         self.stats('bar', list(df[:5]['inflation_adjusted_gross']))
 
         plt.xticks(rotation=30, ha='right')
-        plt.title('Top 5 Total Grossing Disney Movies')
+        plt.title('Top 5 Total Grossing Disney Movies', y=1.08)
         plt.xlabel('Movie Title')
         plt.ylabel('Total Gross ($)')
         plt.tight_layout()
