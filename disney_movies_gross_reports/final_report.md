@@ -3,6 +3,8 @@ In this research, it was found that the best movie genre for Disney to produce i
 
 The best movies for Disney to produce are **Adventure** movies with a rating of **G**.
 
+Dataset obtained from [data.world](https://data.world/kgarrett/disney-character-success-00-16)
+
 ## Genre
 <p align="center"><img src="genre_percent_value.png" width=50% height=50%></p>
 
