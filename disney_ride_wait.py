@@ -5,31 +5,80 @@ route to take of rides.
 get general information such as average wait time of the year of a certain ride.
 """
 
-
 import os
 import matplotlib.pyplot as plt
 import pandas as pd
 
 plt.style.use('ggplot')
-
 path = os.path.dirname(__file__)
-df = pd.read_csv(f'{path}/data/splash_mountain.csv')
-
-# clean data
-df.dropna(subset=['SPOSTMIN'], inplace=True)
-df.drop(df[df['SPOSTMIN'] < 0].index, inplace=True)
+report_dir = 'disney_ride_wait_reports'
 
 
-df_2019 = df.loc[df['date'].str.contains('2019')]
-x = df.mean()['SPOSTMIN']
+class Ride:
+    def __init__(self, df_data_path):
+        self._ride = df_data_path
+        self.ride = df_data_path.split('_')
+        self.ride_cap = []
+        for word in self.ride:
+            self.ride_cap.append(word.capitalize())
+        self.ride = ' '.join(self.ride_cap)
 
-plt.axes()
-plt.bar(df['datetime'], df['SPOSTMIN'])
-plt.plot([0, len(df)], [x, x], 'b--')
-plt.xticks([0, len(df)], ['1/1/2012', '12/31/2019'])
-plt.ylim(0, 200)
-plt.xlabel('Time (01/01/2012 - 12/31/2019)')
-plt.ylabel('Waiting Time (min)')
-plt.title('Wait Times for Splash Mountain')
-plt.savefig(f'{path}/disney_ride_wait_reports/splash_mountain.png')
-plt.show()
+        # set dataframe and clean null values
+        self.df = pd.read_csv(f'{path}/data/{df_data_path}.csv')
+        self.df.dropna(subset=['SPOSTMIN'], inplace=True)
+        self.df.drop(self.df[self.df['SPOSTMIN'] < 0].index, inplace=True)
+
+    def master_plot(self):
+        mean = self.df._get_numeric_data().mean()['SPOSTMIN']
+
+        plt.bar(self.df['datetime'], self.df['SPOSTMIN'])
+        plt.plot([0, len(self.df)], [mean, mean], 'b--')
+        plt.xticks([0, len(self.df)], ['1/1/2012', '12/31/2019'])
+        plt.ylim(0, self.df.max()['SPOSTMIN'])
+        plt.xlabel('Date')
+        plt.ylabel('Waiting Time (min)')
+        plt.title(f'Wait Times for {self.ride}')
+        try:
+            plt.savefig(f'{path}/{report_dir}/{self._ride}/master_wait_times.png')
+        except Exception:
+            os.mkdir(f'{path}/{report_dir}/{self._ride}')
+            plt.savefig(f'{path}/{report_dir}/{self._ride}/master_wait_times.png')
+
+    def yearly_plot(self):
+        years = [
+            '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019'
+        ]
+
+        for year in years:
+            plt.clf()
+            df_year = self.df.loc[self.df['date'].str.contains(year)]
+            mean = df_year._get_numeric_data().mean()['SPOSTMIN']
+
+            plt.bar(df_year['datetime'], df_year['SPOSTMIN'])
+            plt.plot([0, len(df_year)], [mean, mean], 'b--')
+            plt.xticks([0, len(df_year)], ['January', 'December'])
+            plt.ylim(0, df_year.max()['SPOSTMIN'])
+            plt.xlabel('Date')
+            plt.ylabel('Waiting Time (min)')
+            plt.title(f'{year} Wait Times for {self.ride}')
+            try:
+                plt.savefig(f'{path}/{report_dir}/{self._ride}/{year}_wait_times.png')
+            except Exception:
+                os.mkdir(f'{path}/{report_dir}/{self._ride}')
+                plt.savefig(f'{path}/{report_dir}/{self._ride}/{year}_wait_times.png')
+
+    def weekly_plot(self):
+        pass
+
+    def daily_plot(self):
+        pass
+
+
+def best_route():
+    pass
+
+
+if __name__ == '__main__':
+    ride_splash = Ride('splash_mountain')
+    # ride_splash.master_plot()
+    # ride_splash.yearly_plot()
