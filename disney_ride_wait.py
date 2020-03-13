@@ -5,6 +5,7 @@ route to take of rides.
 get general information such as average wait time of the year of a certain ride.
 """
 
+import concurrent.futures
 import os
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -44,34 +45,41 @@ class Ride:
             os.mkdir(f'{path}/{report_dir}/{self._ride}')
             plt.savefig(f'{path}/{report_dir}/{self._ride}/master_wait_times.png')
 
-    def yearly_plot(self):
-        years = [
-            '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019'
-        ]
+    def yearly_plot(self, year):
+        plt.clf()
+        df_year = self.df.loc[self.df['date'].str.contains(year)]
+        mean = df_year._get_numeric_data().mean()['SPOSTMIN']
 
-        for year in years:
-            plt.clf()
-            df_year = self.df.loc[self.df['date'].str.contains(year)]
-            mean = df_year._get_numeric_data().mean()['SPOSTMIN']
-
-            plt.bar(df_year['datetime'], df_year['SPOSTMIN'])
-            plt.plot([0, len(df_year)], [mean, mean], 'b--')
-            plt.xticks([0, len(df_year)], ['January', 'December'])
-            plt.ylim(0, df_year.max()['SPOSTMIN'])
-            plt.xlabel('Date')
-            plt.ylabel('Waiting Time (min)')
-            plt.title(f'{year} Wait Times for {self.ride}')
-            try:
-                plt.savefig(f'{path}/{report_dir}/{self._ride}/{year}_wait_times.png')
-            except Exception:
-                os.mkdir(f'{path}/{report_dir}/{self._ride}')
-                plt.savefig(f'{path}/{report_dir}/{self._ride}/{year}_wait_times.png')
+        plt.bar(df_year['datetime'], df_year['SPOSTMIN'])
+        plt.plot([0, len(df_year)], [mean, mean], 'b--')
+        plt.xticks([0, len(df_year)], ['January', 'December'])
+        plt.ylim(0, df_year.max()['SPOSTMIN'])
+        plt.xlabel('Date')
+        plt.ylabel('Waiting Time (min)')
+        plt.title(f'{year} Wait Times for {self.ride}')
+        try:
+            plt.savefig(f'{path}/{report_dir}/{self._ride}/{year}_wait_times.png')
+        except Exception:
+            os.mkdir(f'{path}/{report_dir}/{self._ride}')
+            plt.savefig(f'{path}/{report_dir}/{self._ride}/{year}_wait_times.png')
+    
+    def monthly_plot(self, month):
+        pass
 
     def weekly_plot(self):
         pass
 
     def daily_plot(self):
         pass
+
+    def multi_process(self, plot_type):
+        years = [
+            '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019'
+        ]
+
+        with concurrent.futures.ProcessPoolExecutor() as executor:
+            if plot_type == 'yearly_plot':
+                executor.map(self.yearly_plot, years)
 
 
 def best_route():
@@ -81,4 +89,4 @@ def best_route():
 if __name__ == '__main__':
     ride_splash = Ride('splash_mountain')
     # ride_splash.master_plot()
-    # ride_splash.yearly_plot()
+    ride_splash.multi_process('yearly_plot')
