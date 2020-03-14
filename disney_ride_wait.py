@@ -21,12 +21,12 @@ class Ride:
     """
 
     def __init__(self, df_data_path):
-        self._ride = df_data_path
+        self._ride = df_data_path # ride file name for directories
         self.ride = df_data_path.split('_')
         self.ride_cap = []
         for word in self.ride:
             self.ride_cap.append(word.capitalize())
-        self.ride = ' '.join(self.ride_cap)
+        self.ride = ' '.join(self.ride_cap) # ride name with correct English for titles
 
         # set dataframe and clean null values
         self.df = pd.read_csv(f'{path}/data/{df_data_path}.csv')
@@ -47,6 +47,7 @@ class Ride:
         plt.ylabel('Waiting Time (min)')
         plt.title(f'Wait Times for {self.ride}')
         plt.legend()
+
         try:
             plt.savefig(f'{path}/{report_dir}/{self._ride}/master_wait_times.png')
         except Exception:
@@ -70,6 +71,7 @@ class Ride:
         plt.ylabel('Waiting Time (min)')
         plt.title(f'{year} Wait Times for {self.ride}')
         plt.legend()
+
         try:
             plt.savefig(f'{path}/{report_dir}/{self._ride}/{year}_wait_times.png')
         except Exception:
@@ -95,6 +97,7 @@ class Ride:
         plt.ylabel('Waiting Time (min)')
         plt.title(f'{month}/2019 Wait Times for {self.ride}')
         plt.legend()
+
         try:
             plt.savefig(f'{path}/{report_dir}/{self._ride}/2019-{month}_wait_times.png')
         except Exception:
@@ -133,6 +136,7 @@ class Ride:
         plt.ylabel('Waiting Time (min)')
         plt.title(f'Jan 2019 Week {week_num} Wait Times for {self.ride}')
         plt.legend()
+
         try:
             plt.savefig(
                 f'{path}/{report_dir}/{self._ride}/2019-01-week{week_num}_wait_times.png'
@@ -143,13 +147,35 @@ class Ride:
                 f'{path}/{report_dir}/{self._ride}/2019-01-week{week_num}_wait_times.png'
             )
 
-    def daily_plot(self):
+    def daily_plot(self, day):
         """Method for plotting wait times for each day in a week for a month in
         a given year. For simplicity as this is only a test program, only the
         first week in the month January in 2019 year will be used
         """
 
-        pass
+        plt.clf()
+
+        df_day = self.df.loc[self.df['date'].str.contains(f'01/{day}/2019')]
+        mean = df_day._get_numeric_data().mean()['SPOSTMIN']
+
+        plt.bar(df_day['datetime'], df_day['SPOSTMIN'])
+        plt.plot([0, len(df_day)], [mean, mean], 'b-', label='mean')
+        plt.xticks([0, len(df_day)], [f'Opening', f'Closing'])
+        plt.ylim(0, df_day.max()['SPOSTMIN'])
+        plt.xlabel('Date')
+        plt.ylabel('Waiting Time (min)')
+        plt.title(f'Jan 2019 Week 1 Day {int(day)} Wait Times for {self.ride}')
+        plt.legend()
+
+        try:
+            plt.savefig(
+                f'{path}/{report_dir}/{self._ride}/2019-01-week1-day{int(day)}_wait_times.png'
+            )
+        except Exception:
+            os.mkdir(f'{path}/{report_dir}/{self._ride}')
+            plt.savefig(
+                f'{path}/{report_dir}/{self._ride}/2019-01-week1-day{int(day)}_wait_times.png'
+            )
 
     def multi_process(self, plot_type):
         """Method for accelerating the plotting processes using 
@@ -165,6 +191,9 @@ class Ride:
         weeks = [
             ['00','08'], ['07','15'], ['14','22'], ['21','32']
         ]
+        days = [
+            '01', '02', '03', '04', '05', '06', '07'
+        ]
 
         with concurrent.futures.ProcessPoolExecutor() as executor:
             if plot_type == 'yearly_plot':
@@ -173,7 +202,8 @@ class Ride:
                 executor.map(self.monthly_plot, months)
             elif plot_type == 'weekly_plot':
                 executor.map(self.weekly_plot, weeks)
-
+            elif plot_type == 'daily_plot':
+                executor.map(self.daily_plot, days)
 
 
 def best_route():
@@ -189,4 +219,5 @@ if __name__ == '__main__':
     # ride_splash.master_plot()
     # ride_splash.multi_process('yearly_plot')
     # ride_splash.multi_process('monthly_plot')
-    ride_splash.multi_process('weekly_plot')
+    # ride_splash.multi_process('weekly_plot')
+    ride_splash.multi_process('daily_plot')
