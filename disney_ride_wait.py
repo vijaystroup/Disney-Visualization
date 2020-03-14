@@ -206,11 +206,50 @@ class Ride:
                 executor.map(self.daily_plot, days)
 
 
-def best_route():
+def best_route(parks):
     """Function that will decided the best route to take in a certain park on a
     certain day
     """
 
+    WALK_TIME = 15 # time to walk between rides
+
+    # transform parks dict keys to make it eaiser to match to input
+    park_keys = [1, 2, 3, 4, 5]
+    parks = dict(zip(park_keys, list(parks.values())))
+
+    # check if input was valid
+    def check_park_input(park):
+        try:
+            park = int(park)
+            if park < 1 or park > 5:
+                raise Exception
+            return park
+        except Exception:
+            print('Invalid input, try again.\n')
+            best_route()
+
+    park = input(
+        'Magic Kingdom(1) | Hollywood Studios(2) | Animal Kingdom(3) | Disneyland(4) | Epcot(5)'
+        '\nWhich park would you like to visit?(1-5): '
+    )
+    park = check_park_input(park)
+
+    # create dict with key as `variable name` and values as dataframe objects
+    rides = {}
+    for park in parks[park]:
+        rides.update({f'df_{park}': pd.read_csv(f'{path}/data/{park}.csv')})
+
+    # clean dataframes
+    for val in rides.values():
+        val.dropna(subset=['SPOSTMIN'], inplace=True)
+        val.drop(val[val['SPOSTMIN'] < 0].index, inplace=True)
+
+
+
+
+
+
+if __name__ == '__main__':
     parks = {
         'Magic Kingdom': ('7_dwarfs_train'),
         'Hollywood Studios':
@@ -222,33 +261,11 @@ def best_route():
         'Epcot': ('soarin', 'spaceship_earth')
     }
 
-    # check if input was valid
-    def check_park_input(park):
-        try:
-            park = int(park)
-            if park < 1 or park > 5:
-                raise Exception
-        except Exception:
-            print('Invalid input, try again.\n')
-            best_route()
-
-    park = input(
-        'Magic Kingdom(1) | Hollywood Studios(2) | Animal Kingdom(3) | Disneyland(4) | Epcot(5)'
-        '\nWhich park would you like to visit?(1-5): '
-    )
-    check_park_input(park)
-
-
-
-
-
-
-if __name__ == '__main__':
     # ride_splash = Ride('splash_mountain')
     # ride_splash.master_plot()
     # ride_splash.multi_process('yearly_plot')
     # ride_splash.multi_process('monthly_plot')
     # ride_splash.multi_process('weekly_plot')
     # ride_splash.multi_process('daily_plot')
-    best_route()
+    best_route(parks)
 
