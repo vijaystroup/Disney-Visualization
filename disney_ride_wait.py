@@ -211,13 +211,44 @@ def best_route():
     certain day
     """
 
-    pass
+    parks = {
+        'Magic Kingdom': ('7_dwarfs_train'),
+        'Hollywood Studios':
+            ('alien_saucers', 'rock_n_rollercoaster', 'slinky_dog', 'toy_story_mania'),
+        'Animal Kingdom':
+            ('dinosaur', 'expedition_everest', 'flight_of_passage', 
+             'kilimanjaro_safaris', 'navi_river'),
+        'Disneyland': ('pirates_of_caribbean', 'splash_mountain'),
+        'Epcot': ('soarin', 'spaceship_earth')
+    }
+
+    # check if input was valid
+    def check_park_input(park):
+        try:
+            park = int(park)
+            if park < 1 or park > 5:
+                raise Exception
+        except Exception:
+            print('Invalid input, try again.\n')
+            best_route()
+
+    park = input(
+        'Magic Kingdom(1) | Hollywood Studios(2) | Animal Kingdom(3) | Disneyland(4) | Epcot(5)'
+        '\nWhich park would you like to visit?(1-5): '
+    )
+    check_park_input(park)
+
+
+
+
 
 
 if __name__ == '__main__':
-    ride_splash = Ride('splash_mountain')
+    # ride_splash = Ride('splash_mountain')
     # ride_splash.master_plot()
     # ride_splash.multi_process('yearly_plot')
     # ride_splash.multi_process('monthly_plot')
     # ride_splash.multi_process('weekly_plot')
-    ride_splash.multi_process('daily_plot')
+    # ride_splash.multi_process('daily_plot')
+    best_route()
+
