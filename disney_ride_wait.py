@@ -218,33 +218,47 @@ def best_route(parks):
     parks = dict(zip(park_keys, list(parks.values())))
 
     # check if input was valid
-    def check_park_input(park):
+    def check_input(checking, lower_limit, upper_limit):
         try:
-            park = int(park)
-            if park < 1 or park > 5:
+            checking = int(checking)
+            if checking < lower_limit or checking > upper_limit:
                 raise Exception
-            return park
+            return checking
         except Exception:
             print('Invalid input, try again.\n')
-            best_route()
+            best_route(parks)
 
-    park = input(
-        'Magic Kingdom(1) | Hollywood Studios(2) | Animal Kingdom(3) | Disneyland(4) | Epcot(5)'
+    park_n = input(
+        'Magic Kingdom(1) | Hollywood Studios(2) | Animal Kingdom(3) | '
+        'Disneyland(4) | Epcot(5)'
         '\nWhich park would you like to visit?(1-5): '
     )
-    park = check_park_input(park)
+    park_n = check_input(park_n, 1, 5)
+    date = input(
+        'Jan(1) | Feb(2) | March(3) | April(4) | May(5) | June(6) | July(7) | '
+        'Aug(8) | Sep(9) | Oct(10) | Nov(11) | Dec(12)'
+        f'\nWhen would you like to visit park {park_n}?(1-12): '
+    )
+    date = check_input(date, 1, 12)
 
     # create dict with key as `variable name` and values as dataframe objects
     rides = {}
-    for park in parks[park]:
-        rides.update({f'df_{park}': pd.read_csv(f'{path}/data/{park}.csv')})
+    for park in parks[park_n]:
+        if park_n == 1: # Magic Kingdom with only 1 ride in dataset
+            df_temp = pd.read_csv(f'{path}/data/{parks[park_n]}.csv')
+            rides.update({f'df_{parks[park_n]}': df_temp.loc[df_temp['date'].str.contains(f'{date:02}/.*/.*')]})
+            break
+        else:
+            df_temp = pd.read_csv(f'{path}/data/{park}.csv')
+            rides.update({f'df_{park}': df_temp.loc[df_temp['date'].str.contains(f'{date:02}/.*/.*')]})
 
     # clean dataframes
     for val in rides.values():
         val.dropna(subset=['SPOSTMIN'], inplace=True)
         val.drop(val[val['SPOSTMIN'] < 0].index, inplace=True)
 
-
+    # get the best day to go by getting the mean of each ride per day and summing
+    # and returning the least amount of wait time
 
 
 
