@@ -29,8 +29,6 @@ def best_route(parks):
     certain day
     """
 
-    WALK_TIME = 15 # time to walk between rides
-
     # transform parks dict keys to make it eaiser to match to input
     park_keys = [1, 2, 3, 4, 5]
     parks = dict(zip(park_keys, list(parks.values())))
@@ -108,8 +106,34 @@ def best_route(parks):
         if min_mean == value: 
             best_day = key
 
-    print(best_day)
+    # get dataframes of the parks with the best day
+    # min time of 1 park then add 7.5min to it time before and after 
+    # and get the next min time of the next park with adding 7.5min before and after
+    # get the datetime order of the rides and return the parks from greatest to least
+    # datetime with the time they have the least wait time
+    park_order(rides, best_day)
 
+
+def park_order(rides, best_day):
+    """Determine the best route to take in a give park. For simplicity sake,
+    only """
+
+    WALK_TIME = 15 / 2 # time to walk between rides 15min
+
+    # get dataframes with their least times
+    for key, df in rides.items():
+        dataframe = df.loc[df['date'].str.contains(f'.*/{best_day:02}/2019')]
+        dataframe.sort_values(by='SPOSTMIN', inplace=True)
+        dataframe = dataframe.loc[dataframe['SPOSTMIN'] == dataframe.iloc[0]['SPOSTMIN']]
+        rides.update({key: dataframe})
+    
+    # find out the ride that has the the least time variablilty
+    ride_lens = {}
+    for ride, df in rides.items():
+        ride_lens.update({ride: len(df)})
+    r_lens = sorted(list(ride_lens.values()))
+
+    
 
 
 if __name__ == '__main__':
