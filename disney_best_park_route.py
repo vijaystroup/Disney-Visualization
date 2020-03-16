@@ -1,7 +1,27 @@
 import os
+import numpy as np
 import pandas as pd
 
 path = os.path.dirname(__file__)
+
+
+def check_input(checking, lower_limit, upper_limit):
+    """Check if the inputs are valid"""
+
+    try:
+        checking = int(checking)
+        if checking < lower_limit or checking > upper_limit:
+            raise Exception
+        return checking
+    except Exception:
+        print('Invalid input, try again.\n')
+        best_route(parks)
+
+
+def nonzero_min(means):
+    """Return the minimum value of a list that is non-zero"""
+
+    return np.nanmin(means)
 
 
 def best_route(parks):
@@ -14,17 +34,6 @@ def best_route(parks):
     # transform parks dict keys to make it eaiser to match to input
     park_keys = [1, 2, 3, 4, 5]
     parks = dict(zip(park_keys, list(parks.values())))
-
-    # check if input was valid
-    def check_input(checking, lower_limit, upper_limit):
-        try:
-            checking = int(checking)
-            if checking < lower_limit or checking > upper_limit:
-                raise Exception
-            return checking
-        except Exception:
-            print('Invalid input, try again.\n')
-            best_route(parks)
 
     park_n = input(
         'Magic Kingdom(1) | Hollywood Studios(2) | Animal Kingdom(3) | '
@@ -80,12 +89,12 @@ def best_route(parks):
         for day in range(0, 31):
             if inital_days:
                 if pd.isna(mean_set[day]):
-                    day_mean_totals.update({day+1: nan_mean})
+                    day_mean_totals.update({day+1: mean_set[day]})
                 else:
                     day_mean_totals.update({day+1: mean_set[day]})
             else:
                 if pd.isna(mean_set[day]):
-                    day_mean_totals.update({day+1: nan_mean})
+                    day_mean_totals.update({day+1: day_mean_totals[day+1] + mean_set[day]})
                 else:
                     day_mean_totals.update(
                         {day+1: day_mean_totals[day+1] + mean_set[day]}
@@ -93,17 +102,14 @@ def best_route(parks):
 
         inital_days = False
 
-    print(day_mean_totals)
+    # get the best day to visit the park
+    min_mean = nonzero_min(list(day_mean_totals.values()))
+    for key, value in day_mean_totals.items(): 
+        if min_mean == value: 
+            best_day = key
 
+    print(best_day)
 
-            # if first_day:
-            #     least_day = 1
-            #     least_time = day_mean
-            #     first_day = False
-            # else:
-            #     if day_mean < least_time:
-            #         least_day = day
-            #         least_time = day_mean
 
 
 if __name__ == '__main__':
