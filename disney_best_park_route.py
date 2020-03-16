@@ -59,34 +59,51 @@ def best_route(parks):
         dataframe.dropna(subset=['SPOSTMIN'], inplace=True)
         dataframe.drop(dataframe[dataframe['SPOSTMIN'] < 0].index, inplace=True)
 
-    # get the best day to go by getting the mean of each ride per day and summing
-    # and returning the least amount of wait time
-    means = {}
-    for df in rides.values():
-        mean_total = 0
-        first_day = True
-
-        day_means = set()
+    # creating a dict of rides and their mean wait times per day
+    ride_means = {}
+    ride_keys = list(rides.keys())
+    for i, df in enumerate(rides.values()):
+        day_means = []
         for day in range(1, 32):
             df_day = df.loc[df['date'].str.contains(f'{date:02}/{day:02}/.*')]
             day_mean = df_day._get_numeric_data().mean()['SPOSTMIN']
-            day_means.add(day_mean)
+            day_means.append(day_mean)
+        
+        ride_means.update({ride_keys[i]: day_means})
 
-
-
-
-            if first_day:
-                least_day = 1
-                least_time = day_mean
-                first_day = False
+    # dict of total wait times of all rides on a certain day
+    first_day = True
+    day_mean_totals = {}
+    inital_days = True
+    nan_mean = 0
+    for mean_set in ride_means.values():
+        for day in range(0, 31):
+            if inital_days:
+                if pd.isna(mean_set[day]):
+                    day_mean_totals.update({day+1: nan_mean})
+                else:
+                    day_mean_totals.update({day+1: mean_set[day]})
             else:
-                if day_mean < least_time:
-                    least_day = day
-                    least_time = day_mean
+                if pd.isna(mean_set[day]):
+                    day_mean_totals.update({day+1: nan_mean})
+                else:
+                    day_mean_totals.update(
+                        {day+1: day_mean_totals[day+1] + mean_set[day]}
+                    )
 
-        # means.update(
-        #     ''
-        # )
+        inital_days = False
+
+    print(day_mean_totals)
+
+
+            # if first_day:
+            #     least_day = 1
+            #     least_time = day_mean
+            #     first_day = False
+            # else:
+            #     if day_mean < least_time:
+            #         least_day = day
+            #         least_time = day_mean
 
 
 if __name__ == '__main__':
