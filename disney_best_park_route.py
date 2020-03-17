@@ -30,49 +30,9 @@ def check_input(checking, lower_limit, upper_limit):
         best_route(parks)
 
 
-def best_route(parks):
-    """Function that will decided the best route to take in a certain park on a
-    certain day
-    """
+def mean_wait_times(date, rides):
+    """Calculate and return a dict of ride names and their mean wait times"""
 
-    # transform parks dict keys to make it eaiser to match to input
-    park_keys = [1, 2, 3, 4, 5]
-    parks = dict(zip(park_keys, list(parks.values())))
-
-    park_n = input(
-        'Magic Kingdom(1) | Hollywood Studios(2) | Animal Kingdom(3) | '
-        'Disneyland(4) | Epcot(5)'
-        '\nWhich park would you like to visit?(1-5): '
-    )
-    park_n = check_input(park_n, 1, 5)
-    date = input(
-        'Jan(1) | Feb(2) | March(3) | April(4) | May(5) | June(6) | July(7) | '
-        'Aug(8) | Sep(9) | Oct(10) | Nov(11) | Dec(12)'
-        f'\nWhen would you like to visit park {park_n}?(1-12): '
-    )
-    date = check_input(date, 1, 12)
-
-    # create dict with key as `variable name` and values as dataframe objects
-    rides = {}
-    for park in parks[park_n]:
-        if park_n == 1: # Magic Kingdom with only 1 ride in dataset
-            df_temp = pd.read_csv(f'{path}/data/{parks[park_n]}.csv')
-            rides.update(
-                {f'df_{parks[park_n]}': df_temp.loc[df_temp['date'].str.contains(f'{date:02}/.*/.*')]}
-            )
-            break
-        else:
-            df_temp = pd.read_csv(f'{path}/data/{park}.csv')
-            rides.update(
-                {f'df_{park}': df_temp.loc[df_temp['date'].str.contains(f'{date:02}/.*/.*')]}
-            )
-
-    # clean dataframes
-    for dataframe in rides.values():
-        dataframe.dropna(subset=['SPOSTMIN'], inplace=True)
-        dataframe.drop(dataframe[dataframe['SPOSTMIN'] < 0].index, inplace=True)
-
-    # creating a dict of rides and their mean wait times per day
     ride_means = {}
     ride_keys = list(rides.keys())
     for i, df in enumerate(rides.values()):
@@ -83,8 +43,15 @@ def best_route(parks):
             day_means.append(day_mean)
         
         ride_means.update({ride_keys[i]: day_means})
+    
+    return ride_means
 
-    # dict of total wait times of all rides on a certain day
+
+def total_wait_times(ride_means):
+    """Return a dict of the the day of the month and its total average wait
+    time
+    """
+
     first_day = True
     day_mean_totals = {}
     inital_days = True
@@ -105,15 +72,26 @@ def best_route(parks):
                     )
 
         inital_days = False
+    
+    return day_mean_totals
 
-    # get the best day to visit the park
-    min_mean = np.nanmin(list(day_mean_totals.values()))
-    for key, value in day_mean_totals.items(): 
-        if min_mean == value: 
-            best_day = key
 
-    ride_times = park_order(rides, date, best_day)
-    report(ride_times, date, best_day, park_n)
+def report(ride_times, date, best_day, park_n):
+    """Print to user the order and times of the rides of the park they chose"""
+
+    times = sorted(list(ride_times.values()))
+
+    print(f"""
+        Park #{park_n} | Month #{date}
+        The best day of the month to visit is: {best_day}
+        Below is the order and times of which to visit the rides in your park...
+    """)
+    
+    for time in times:
+        for key, val in ride_times.items():
+            if val == time:
+                ride = ' '.join(key.split('_')[1:])
+                print(f'\t{ride}: {val}')
 
 
 def park_order(rides, date, best_day):
@@ -181,24 +159,60 @@ def park_order(rides, date, best_day):
 
     return ride_times
 
-# once rides and their times are in dict, print ascending order of time
-# of the ride and ride time
-def report(ride_times, date, best_day, park_n):
-    """Print to user the order and times of the rides of the park they chose"""
 
-    times = sorted(list(ride_times.values()))
+def main(parks):
+    """Function that will decided the best route to take in a certain park on a
+    certain day
+    """
 
-    print(f"""
-        Park #{park_n} | Month #{date}
-        The best day of the month to visit is: {best_day}
-        Below is the order and times of which to visit the rides in your park...
-    """)
-    
-    for time in times:
-        for key, val in ride_times.items():
-            if val == time:
-                ride = ' '.join(key.split('_')[1:])
-                print(f'\t{ride}: {val}')
+    # transform parks dict keys to make it eaiser to match to input
+    park_keys = [1, 2, 3, 4, 5]
+    parks = dict(zip(park_keys, list(parks.values())))
+
+    park_n = input(
+        'Magic Kingdom(1) | Hollywood Studios(2) | Animal Kingdom(3) | '
+        'Disneyland(4) | Epcot(5)'
+        '\nWhich park would you like to visit?(1-5): '
+    )
+    park_n = check_input(park_n, 1, 5)
+    date = input(
+        'Jan(1) | Feb(2) | March(3) | April(4) | May(5) | June(6) | July(7) | '
+        'Aug(8) | Sep(9) | Oct(10) | Nov(11) | Dec(12)'
+        f'\nWhen would you like to visit park {park_n}?(1-12): '
+    )
+    date = check_input(date, 1, 12)
+
+    # create dict with key as `variable name` and values as dataframe objects
+    rides = {}
+    for park in parks[park_n]:
+        if park_n == 1: # Magic Kingdom with only 1 ride in dataset
+            df_temp = pd.read_csv(f'{path}/data/{parks[park_n]}.csv')
+            rides.update(
+                {f'df_{parks[park_n]}': df_temp.loc[df_temp['date'].str.contains(f'{date:02}/.*/.*')]}
+            )
+            break
+        else:
+            df_temp = pd.read_csv(f'{path}/data/{park}.csv')
+            rides.update(
+                {f'df_{park}': df_temp.loc[df_temp['date'].str.contains(f'{date:02}/.*/.*')]}
+            )
+
+    # clean dataframes
+    for dataframe in rides.values():
+        dataframe.dropna(subset=['SPOSTMIN'], inplace=True)
+        dataframe.drop(dataframe[dataframe['SPOSTMIN'] < 0].index, inplace=True)
+
+    ride_means = mean_wait_times(date, rides)
+    day_mean_totals = total_wait_times(ride_means)
+
+    # get the best day to visit the park
+    min_mean = np.nanmin(list(day_mean_totals.values()))
+    for key, value in day_mean_totals.items(): 
+        if min_mean == value: 
+            best_day = key
+
+    ride_times = park_order(rides, date, best_day)
+    report(ride_times, date, best_day, park_n)
 
 
 if __name__ == '__main__':
@@ -213,4 +227,4 @@ if __name__ == '__main__':
         'Epcot': ('soarin', 'spaceship_earth')
     }
 
-    best_route(parks)
+    main(parks)
