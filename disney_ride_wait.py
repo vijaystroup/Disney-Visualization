@@ -37,6 +37,8 @@ class Ride:
         """Method for plotting wait times from 2012 to 2019 (the whole dataset)
         """
 
+        plt.clf()
+
         mean = self.df._get_numeric_data().mean()['SPOSTMIN']
 
         plt.bar(self.df['datetime'], self.df['SPOSTMIN'])
@@ -206,10 +208,25 @@ class Ride:
                 executor.map(self.daily_plot, days)
 
 
+def multi_process_master_plots(ride):
+    """Multi-process each ride. I am not doing processes of processes due to
+    memory issues, that is why I have another loop after the master plots that
+    goes ride by ride and plots the other plots"""
+
+    ride = Ride(ride.split('.')[0])
+    ride.master_plot()
+
+
 if __name__ == '__main__':
-    # ride_splash = Ride('splash_mountain')
-    # ride_splash.master_plot()
-    # ride_splash.multi_process('yearly_plot')
-    # ride_splash.multi_process('monthly_plot')
-    # ride_splash.multi_process('weekly_plot')
-    # ride_splash.multi_process('daily_plot')
+    data = os.listdir(f'{path}/data')
+    data.remove('disney_movies_total_gross.csv') # this is a datafile for a
+                                                 # different module
+    
+    # simple loop used instead of concurrancy due to hardware limitations
+    for datum in data:
+        ride = Ride(datum.split('.')[0])
+        ride.master_plot()
+        ride.multi_process('yearly_plot')
+        ride.multi_process('monthly_plot')
+        ride.multi_process('weekly_plot')
+        ride.multi_process('daily_plot')
