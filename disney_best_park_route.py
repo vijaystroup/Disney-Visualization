@@ -194,17 +194,10 @@ def main(parks):
     # create dict with key as `variable name` and values as dataframe objects
     rides = {}
     for park in parks[park_n]:
-        if park_n == 1: # Magic Kingdom with only 1 ride in dataset
-            df_temp = pd.read_csv(f'{path}/data/{parks[park_n]}.csv')
-            rides.update(
-                {f'df_{parks[park_n]}': df_temp.loc[df_temp['date'].str.contains(f'{date:02}/.*/.*')]}
-            )
-            break
-        else:
-            df_temp = pd.read_csv(f'{path}/data/{park}.csv')
-            rides.update(
-                {f'df_{park}': df_temp.loc[df_temp['date'].str.contains(f'{date:02}/.*/.*')]}
-            )
+        df_temp = pd.read_csv(f'{path}/data/{park}.csv')
+        rides.update(
+            {f'df_{park}': df_temp.loc[df_temp['date'].str.contains(f'{date:02}/.*/.*')]}
+        )
 
     # clean dataframes
     for dataframe in rides.values():
@@ -226,7 +219,7 @@ def main(parks):
 
 if __name__ == '__main__':
     parks = {
-        'Magic Kingdom': ('7_dwarfs_train'),
+        'Magic Kingdom': ('7_dwarfs_train',),
         'Hollywood Studios':
             ('alien_saucers', 'rock_n_rollercoaster', 'slinky_dog', 'toy_story_mania'),
         'Animal Kingdom':
