@@ -112,7 +112,8 @@ def best_route(parks):
         if min_mean == value: 
             best_day = key
 
-    park_order(rides, date, best_day)
+    ride_times = park_order(rides, date, best_day)
+    report(ride_times, date, best_day, park_n)
 
 
 def park_order(rides, date, best_day):
@@ -182,8 +183,22 @@ def park_order(rides, date, best_day):
 
 # once rides and their times are in dict, print ascending order of time
 # of the ride and ride time
-def report(ride_times):
-    pass
+def report(ride_times, date, best_day, park_n):
+    """Print to user the order and times of the rides of the park they chose"""
+
+    times = sorted(list(ride_times.values()))
+
+    print(f"""
+        Park #{park_n} | Month #{date}
+        The best day of the month to visit is: {best_day}
+        Below is the order and times of which to visit the rides in your park...
+    """)
+    
+    for time in times:
+        for key, val in ride_times.items():
+            if val == time:
+                ride = ' '.join(key.split('_')[1:])
+                print(f'\t{ride}: {val}')
 
 
 if __name__ == '__main__':
