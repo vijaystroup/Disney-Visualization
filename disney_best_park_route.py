@@ -6,7 +6,9 @@ data.
 
 One thing to make this project better is to make the global dataframes taking
 into account all they years, not just 2019, and conbining them into one
-dataframe with the averages of the wait times. 
+dataframe with the averages of the wait times. Also another thing that could be
+added is taking into consideration an opening and closing time a user might
+want to visit a park such as only visiting between 09:00 and 18:00.
 """
 
 from datetime import datetime, timedelta
