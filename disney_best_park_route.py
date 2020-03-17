@@ -29,7 +29,7 @@ def check_input(checking, lower_limit, upper_limit):
         return checking
     except Exception:
         print('Invalid input, try again.\n')
-        best_route(parks)
+        return False
 
 
 def mean_wait_times(date, rides):
@@ -171,18 +171,25 @@ def main(parks):
     park_keys = [1, 2, 3, 4, 5]
     parks = dict(zip(park_keys, list(parks.values())))
 
-    park_n = input(
-        'Magic Kingdom(1) | Hollywood Studios(2) | Animal Kingdom(3) | '
-        'Disneyland(4) | Epcot(5)'
-        '\nWhich park would you like to visit?(1-5): '
-    )
-    park_n = check_input(park_n, 1, 5)
-    date = input(
-        'Jan(1) | Feb(2) | March(3) | April(4) | May(5) | June(6) | July(7) | '
-        'Aug(8) | Sep(9) | Oct(10) | Nov(11) | Dec(12)'
-        f'\nWhen would you like to visit park {park_n}?(1-12): '
-    )
-    date = check_input(date, 1, 12)
+    while True:
+        park_n = input(
+            'Magic Kingdom(1) | Hollywood Studios(2) | Animal Kingdom(3) | '
+            'Disneyland(4) | Epcot(5)'
+            '\nWhich park would you like to visit?(1-5): '
+        )
+        park_n = check_input(park_n, 1, 5)
+        if park_n:
+            break
+
+    while True:
+        date = input(
+            'Jan(1) | Feb(2) | March(3) | April(4) | May(5) | June(6) | July(7) | '
+            'Aug(8) | Sep(9) | Oct(10) | Nov(11) | Dec(12)'
+            f'\nWhen would you like to visit park {park_n}?(1-12): '
+        )
+        date = check_input(date, 1, 12)
+        if date:
+            break
 
     # create dict with key as `variable name` and values as dataframe objects
     rides = {}
