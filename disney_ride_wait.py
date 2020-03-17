@@ -1,8 +1,7 @@
 """
-Input a date of when you want to visit a certain park, and determine the best
-route to take of rides.
-
-get general information such as average wait time of the year of a certain ride.
+This module looks at The Walt Disney Company's average wait time data for rides
+they have. With this data, this module creates many plots per ride so we can
+visualize the data.
 """
 
 import concurrent.futures
@@ -211,7 +210,13 @@ class Ride:
 def multi_process_master_plots(ride):
     """Multi-process each ride. I am not doing processes of processes due to
     memory issues, that is why I have another loop after the master plots that
-    goes ride by ride and plots the other plots"""
+    goes ride by ride and plots the other plots
+
+    Notes
+    -----
+    This function was not used to due hardware limitions, see comment in if
+    __name__ == '__main'__.
+    """
 
     ride = Ride(ride.split('.')[0])
     ride.master_plot()

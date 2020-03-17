@@ -14,7 +14,9 @@ plt.style.use('ggplot')
 
 class Disney_Movies_Gross:
     """This class has functions to find the best genre and rating for Disney
-    to sell the most movies"""
+    to sell the most movies
+    """
+
     def __init__(self):
         self.path = os.path.dirname(__file__)
         self.plot_loc = 'disney_movies_gross_reports'
@@ -57,7 +59,8 @@ class Disney_Movies_Gross:
     def best_genre(self):
         """Method to find out Disney's best selling genre of film. The value of
         a genre is determined by the mean inflation_adjusted_gross of each
-        genre."""
+        genre
+        """
 
         genres, total, labels, values = self.iter_data('genre', 'inflation_adjusted_gross')
 
@@ -73,7 +76,8 @@ class Disney_Movies_Gross:
     def best_MPAA_rating(self):
         """Method for finding the best selling set of titles with a certain
         rating. Just like best_genre, we will get the mean of a title in each
-        rating so we can see the real value of each rating"""
+        rating so we can see the real value of each rating
+        """
 
         rating, total, labels, values = self.iter_data('MPAA_rating', 'inflation_adjusted_gross')
         
@@ -131,7 +135,8 @@ class Disney_Movies_Gross:
     @staticmethod
     def sort_labels(classes, labels, y):
         """Method of sorting lables for legend. Algorithm from Saullo G. P. Castro
-        on StackOverflow."""
+        on StackOverflow
+        """
 
         classes, labels, _ = zip(*sorted(
             zip(classes, labels, y),
@@ -144,7 +149,8 @@ class Disney_Movies_Gross:
     @staticmethod
     def stats(plt_type, values):
         """Plotting statistical information on plots: mean, median, std. dev.,
-        min, max, total"""
+        min, max, total
+        """
 
         fontsize = 7
         total = sum(values)
