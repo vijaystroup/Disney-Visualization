@@ -1,3 +1,15 @@
+"""This module looks at The Walt Disney Company's average wait time per ride
+data. With this data, we are able to say with the user choosing the park and
+month they would like to visit one of the Disney parks, the best day and the
+best route at what times they should go to the list of avalible rides in the
+data.
+
+One thing to make this project better is to make the global dataframes taking
+into account all they years, not just 2019, and conbining them into one
+dataframe with the averages of the wait times. 
+"""
+
+from datetime import datetime, timedelta
 import os
 import numpy as np
 import pandas as pd
@@ -16,12 +28,6 @@ def check_input(checking, lower_limit, upper_limit):
     except Exception:
         print('Invalid input, try again.\n')
         best_route(parks)
-
-
-def nonzero_min(means):
-    """Return the minimum value of a list that is non-zero"""
-
-    return np.nanmin(means)
 
 
 def best_route(parks):
@@ -101,24 +107,23 @@ def best_route(parks):
         inital_days = False
 
     # get the best day to visit the park
-    min_mean = nonzero_min(list(day_mean_totals.values()))
+    min_mean = np.nanmin(list(day_mean_totals.values()))
     for key, value in day_mean_totals.items(): 
         if min_mean == value: 
             best_day = key
 
-    # get dataframes of the parks with the best day
-    # min time of 1 park then add 7.5min to it time before and after 
-    # and get the next min time of the next park with adding 7.5min before and after
-    # get the datetime order of the rides and return the parks from greatest to least
-    # datetime with the time they have the least wait time
-    park_order(rides, best_day)
+    park_order(rides, date, best_day)
 
 
-def park_order(rides, best_day):
+def park_order(rides, date, best_day):
     """Determine the best route to take in a give park. For simplicity sake,
-    only """
+    only the 2019 years data will be accounted for when calculating
+    """
 
-    WALK_TIME = 15 / 2 # time to walk between rides 15min
+    WALK_TIME = timedelta(minutes=7.5) # time to walk between rides 15min
+    RIDE_LENGTH = timedelta(minutes=5.0) # time duration of a ride is 5min
+    DEAD_TIME = WALK_TIME + RIDE_LENGTH
+    SEARCH_DATE = f'{date:02}{best_day:02}2019'
 
     # get dataframes with their least times
     for key, df in rides.items():
@@ -133,7 +138,52 @@ def park_order(rides, best_day):
         ride_lens.update({ride: len(df)})
     r_lens = sorted(list(ride_lens.values()))
 
-    
+    # get times to get on rides
+    fist_val = True
+    ride_times = {}
+    j = 0
+    for n in r_lens:
+        for key, val in ride_lens.items():
+            if val == n:
+                if not fist_val:
+                    init_time = list(ride_times.values())[j-1]
+
+                    lower = rides[key].loc[
+                        rides[key]['datetime'] < f'{init_time-DEAD_TIME}'
+                    ]
+                    upper = rides[key].loc[
+                        rides[key]['datetime'] > f'{init_time+DEAD_TIME}'
+                    ]
+                    df_cat = pd.concat([lower, upper]).reindex()
+
+                    time = df_cat.iloc[0]['datetime']
+                    time = time.split(' ')[-1].split(':')
+                    time = ''.join(time)
+                    time = SEARCH_DATE + time
+                    time = datetime.strptime(time, "%m%d%Y%H%M%S")
+
+                    ride_times.update({key: time})
+                else:
+                    # if this is the first time going through loop, we will be here
+                    for i in rides[key]['datetime']:
+                        init_time = i
+                        init_time = init_time.split(' ')[-1].split(':')
+                        init_time = ''.join(init_time)
+                        init_time = SEARCH_DATE + init_time
+                        init_time = datetime.strptime(init_time, "%m%d%Y%H%M%S")
+                        if fist_val:
+                            ride_times.update({key: init_time})
+
+                        break
+        j += 1
+        fist_val = False
+
+    return ride_times
+
+# once rides and their times are in dict, print ascending order of time
+# of the ride and ride time
+def report(ride_times):
+    pass
 
 
 if __name__ == '__main__':
