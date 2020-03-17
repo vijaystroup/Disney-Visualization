@@ -1,5 +1,5 @@
 # Overview
-In this research, many plots were created to visualize the data.  Some of the data was missing so some parts of some graphs may look missing.  The overall point of these reports were to visualize the average wait times on variable time intervals over many differnt Disney Park rides.
+In this research, many plots were created to visualize the data.  The overall point of these reports were to visualize the average wait times on variable time intervals over many differnt Disney Park rides.
 
 Dataset obtained from [Touring Plans](https://touringplans.com/walt-disney-world/crowd-calendar#DataSets)
 
