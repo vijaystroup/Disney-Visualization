@@ -42,24 +42,22 @@ consideration all the hours of the day.
 >
 >Magic Kingdom(1) | Hollywood Studios(2) | Animal Kingdom(3) | Disneyland(4) | Epcot(5)
 >
->Which park would you like to visit?(1-5): 3
+>Which park would you like to visit?(1-5): 2
 >
 >Jan(1) | Feb(2) | March(3) | April(4) | May(5) | June(6) | July(7) | Aug(8) | Sep(9) | Oct(10) | Nov(11) | Dec(12)
 >
 >When would you like to visit park 3?(1-12): 2
 >
->    Park #3 | Month #2
+>    Park #2 | Month #2
 >
->    The best day of the month to visit is: 26
+>    The best day of the month to visit is: 6
 >
 >    Below is the order and times of which to visit the rides in your park...
 >
->    navi river: 2019-02-26 08:32:30
+>    slinky dog: 2019-02-06 06:51:09
 >
->    expedition everest: 2019-02-26 08:59:50
+>    toy story mania: 2019-02-06 07:23:07
 >
->    kilimanjaro safaris: 2019-02-26 09:03:59
+>    rock n rollercoaster: 2019-02-06 09:09:08
 >
->    dinosaur: 2019-02-26 10:02:57
->
->    flight of passage: 2019-02-26 23:39:18
+>    alien saucers: 2019-02-06 19:58:09
