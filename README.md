@@ -15,14 +15,14 @@ The module *disney_best_park_route* which asks for a users input, and outputs th
 The Movie Gross module examined data that had a movie title with its associated genre, rating, and gross. With this, I was able to see which type of movies are best sellers for Disney.  
 The data that Adventure movies and G rated movies are what makes Disney the most money.
 
-[Movie Gross Report](https://github.com/VijayStroup/Disney-Visualization/blob/master/disney_movies_gross_reports/final_report.md)
+[Movie Gross Report](https://github.com/VijayStroup/Disney-Visualization/tree/master/disney_movies_gross_reports)
 
 
 ## Ride Waiting Time
 
 The Ride Waiting Time module examined data that had a ride with the datetime and wait time for that perticular ride.  With this data, many plots with different time intervals were created.
 
-[Movie Gross Report](https://github.com/VijayStroup/Disney-Visualization/blob/master/disney_ride_wait_reports/final_report.md)
+[Ride Waiting Time Report](https://github.com/VijayStroup/Disney-Visualization/tree/master/disney_ride_wait_reports)
 
 ## Best Park Route
 
